@@ -8,6 +8,10 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+// Group
+
+const donutsGroup = new THREE.Group()
+
 /**
  * Fonts
  */
@@ -68,7 +72,7 @@ fontLoader.load(
         for(let i=0; i < 200; i++){
             const donutMesh = new THREE.Mesh(donutGeometry, material)
 
-            donutMesh.position.x = (Math.random() - 0.5) * 10
+            donutMesh.position.x = (Math.random() - 0.5) * 15
             donutMesh.position.y = (Math.random() - 0.5) * 10
             donutMesh.position.z = (Math.random() - 0.5) * 10
 
@@ -78,10 +82,12 @@ fontLoader.load(
             const scale = Math.random()
             donutMesh.scale.set(scale, scale, scale)
 
-            scene.add(donutMesh)
+            donutsGroup.add(donutMesh)
         }
     }
 )
+
+scene.add(donutsGroup)
 
 /**
  * Sizes
@@ -118,6 +124,9 @@ scene.add(camera)
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
+// max distance from the center of the scene
+controls.maxDistance = 4
+controls.minDistance = 3
 
 /**
  * Renderer
@@ -134,6 +143,18 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 const clock = new THREE.Clock()
 
 const tick = () => {
+
+    const elapsedTime = clock.getElapsedTime()
+
+    // Update objects
+    donutsGroup.rotation.y = elapsedTime * 0.07
+    donutsGroup.rotation.x = elapsedTime * 0.07
+
+    // Update objects
+    donutsGroup.children.forEach(donut => {
+        donut.rotation.y += (Math.random() * 0.01)
+        donut.rotation.x += (Math.random() * 0.01)
+    })
 
     // Update controls
     controls.update()
